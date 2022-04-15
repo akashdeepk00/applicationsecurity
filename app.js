@@ -1,9 +1,9 @@
 //jshint esversion:6
-require('dotenv').config();
+//require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
-const mongoose = require("mongoose");
+//const mongoose = require("mongoose");
 //const res = require("express/lib/response");
 //const encrypt = require("mongoose-encryption");
 const md5 = require("md5");
@@ -19,7 +19,8 @@ mongoose.connect("mongodb://localhost:27017/userDB", {useNewUrlParser:true});
 //creating a schema
 const userSchema = new mongoose.Schema({
     email: String,
-    password: String
+    password: String,
+    unencryptedPassword: String
 });
 
 //schema plugin & which field to encrypt. encrypt password regardless of any other options will be left unencrypted
@@ -45,7 +46,8 @@ app.get("/register", function(req, res) {
 app.post("/register", function(req, res) {
     const newUser = new UserLogin({ //Need to create a const because we are making a DB entry.
         email : req.body.username,
-        password : md5(req.body.password)
+        password : md5(req.body.password),
+        unencryptedPassword : req.body.password
     });
     newUser.save(function(err){
         if(!err) {
@@ -65,7 +67,7 @@ app.post("/login", function(req, res) {
             console.log(err);
         } else {
             if(foundUser) {
-                if(foundUser.password === password); {
+                if(foundUser.password === password) {
                     res.render("secrets");
                 }
             }
